@@ -1,0 +1,111 @@
+.group-list-container {
+    max-width: 1000px;
+    width: 90%;
+    margin: 40px auto;
+    color: #e0e0e0;
+}
+
+.page-title {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #fff;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+}
+
+/* THE GRID LAYOUT */
+.groups-grid {
+    display: grid;
+    /* Responsive columns: At least 250px wide, fitting as many as possible */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* THE CARD */
+.group-card {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 25px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    
+    /* The "Tech Accent" - Purple line on left */
+    border-left: 4px solid #d500f9; 
+    position: relative;
+    overflow: hidden;
+}
+
+.group-card:hover {
+    transform: translateY(-5px); /* Float up */
+    border-color: #555; /* Lighten border */
+    box-shadow: 0 5px 15px rgba(213, 0, 249, 0.15); /* Purple Glow */
+    background: #252525;
+}
+
+.card-icon {
+    font-size: 1.8rem;
+    background: #333;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #d500f9;
+}
+
+.card-info {
+    flex: 1;
+}
+
+.group-name {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.view-details {
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 5px;
+    display: block;
+    transition: color 0.2s;
+}
+
+.group-card:hover .view-details {
+    color: #d500f9; /* Text turns purple on hover */
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 50px;
+    background: #1e1e1e;
+    border-radius: 12px;
+    border: 1px dashed #444;
+}
+
+.empty-state p {
+    color: #888;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+.create-btn {
+    background-color: #d500f9;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: 500;
+}
+.create-btn:hover {
+    background-color: #e040fb;
+}
