@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const MyGroups = () => {
-    const [groupsData, setGroupsData] = useState([]); // Stores the raw list from backend
+    const [groupsData, setGroupsData] = useState([]); 
     const [expandedGroups, setExpandedGroups] = useState({});
     const [loading, setLoading] = useState(true);
 
-    // 2. The API Call
     useEffect(() => {
         const fetchUserGroups = async () => {
             try {
@@ -70,13 +69,9 @@ const MyGroups = () => {
                             {members.map(member => (
                                 <div key={member.userId} className="task-item">
                                     <div className="task-info">
-                                        {/* Display Full Name as the "Title" */}
                                         <div className="task-title">{member.fullName}</div>
-                                        
-                                        {/* Display Username as the "Description" */}
                                         <div className="task-desc">@{member.username}</div>
                                     </div>
-                                    {/* You can add an icon or 'User' label here if you want */}
                                 </div>
                             ))}
                         </div>
