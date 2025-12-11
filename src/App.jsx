@@ -5,6 +5,7 @@ import CreateTask from './pages/CreateTask';
 import MainLayout from './pages/MainLayout';
 import CreateGroup from './pages/CreateGroup';
 import GroupList from './pages/GroupList';
+import MyGroups from './pages/MyGroups';
 import GroupDetails from './pages/GroupDetails';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -50,6 +51,12 @@ function App() {
                 <Route path="/groups/:id" element={
                     <ProtectedRoute>
                         <GroupDetails />
+                    </ProtectedRoute>
+                } />
+                <Route path="/check-groups" element={
+                    <ProtectedRoute>
+                        {/* <GroupList /> */}
+                        <MyGroups />
                     </ProtectedRoute>
                 } />
             </Route>
