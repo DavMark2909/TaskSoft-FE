@@ -97,6 +97,41 @@ function Home() {
         fetchData();
     }, []);
 
+
+    const handleComplete = async (task) => {
+
+        const payload = {
+            id: task.id,
+            name: task.title,       
+            description: task.description,
+            type: "COMPLETED"
+        };
+
+        try{
+            const response = await fetch('/api/tasks/update', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok){
+                setData(prev => ({
+                    ...prev,
+                    ongoingTasks: prev.ongoingTasks.filter(t => t.id !== task.id),
+                    stats: {
+                        ...prev.stats,
+                        totalPending: prev.stats.totalPending - 1,
+                        totalCompleted: prev.stats.totalCompleted + 1
+                    }
+                }));
+            }
+        } catch (error) {
+            console.error("Failed to delete task", error);
+        }
+    };
+
     
     const getGroupedTasks = () => {
         if (!data || !data.ongoingTasks) return {};
@@ -131,7 +166,7 @@ function Home() {
     return (
         <>
             <header className="welcome-header">
-                <h1>Welcome, {data?.userName}</h1>
+                <h1>Welcome {data?.userName}</h1>
                 <p className="date-display">{new Date().toLocaleDateString()}</p>
             </header>
 
@@ -181,6 +216,15 @@ function Home() {
                                             <span className="due-date">
                                                 Due: {new Date(task.dueDate).toLocaleDateString()}
                                             </span>
+                                            <button 
+                                                className="complete-btn"
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); 
+                                                    handleComplete(task);
+                                                }}
+                                            >
+                                                ✓ Complete
+                                            </button>
                                         </div>
                                     </div>
                                 ))}

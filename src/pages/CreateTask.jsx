@@ -79,8 +79,6 @@ const CreateTask = () => {
             };
         }
 
-        console.log(payload)
-
 
         try {
             const response = await fetch('/api/tasks/create', {
