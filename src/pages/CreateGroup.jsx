@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../styles/CreateGroups.css";
 
+import UserSelector from '../components/UserSelector';
+
 const CreateGroup = () => {
     const navigate = useNavigate();
 
@@ -28,24 +30,29 @@ const CreateGroup = () => {
         fetchUsers();
     }, []);
 
-    const handleAddUser = (e) => {
-        const userId = e.target.value;
-        if (!userId) return;
+    const addUserId = (id) => {
+        // ------- handleAddUser --------
+        // const userId = e.target.value;
+        // if (!userId) return;
 
-        const userToAdd = allUsers.find(u => String(u.id) === String(userId));
+        // const userToAdd = allUsers.find(u => String(u.id) === String(userId));
 
-        if (userToAdd) {
-             const realId = userToAdd.id; 
+        // if (userToAdd) {
+        //      const realId = userToAdd.id; 
              
-             if (!selectedUserIds.includes(realId)) {
-                setSelectedUserIds([...selectedUserIds, realId]);
-            }
-        }
+        //      if (!selectedUserIds.includes(realId)) {
+        //         setSelectedUserIds([...selectedUserIds, realId]);
+        //     }
+        // }
         
-        e.target.value = "";
+        // e.target.value = "";
+        if (!selectedUserIds.includes(id)) {
+            setSelectedUserIds([...selectedUserIds, id]);
+        }
     };
 
-    const handleRemoveUser = (userIdToRemove) => {
+    const removeUserId = (userIdToRemove) => {
+        // handleRemoveUser
         setSelectedUserIds(selectedUserIds.filter(id => id !== userIdToRemove));
     };
 
@@ -79,7 +86,7 @@ const CreateGroup = () => {
         }
     };
 
-    const getUserObj = (id) => allUsers.find(u => u.id === id);
+    // const getUserObj = (id) => allUsers.find(u => u.id === id);
 
     return (
         <div className="create-group-container">
@@ -97,7 +104,15 @@ const CreateGroup = () => {
                     />
                 </div>
 
-                <div className="form-group">
+                <UserSelector 
+                    allUsers={allUsers}
+                    selectedUserIds={selectedUserIds}
+                    onAddUser={addUserId}
+                    onRemoveUser={removeUserId}
+                    loading={loading}
+                />
+
+                {/* <div className="form-group">
                     <label>Add Members</label>
                     <select onChange={handleAddUser} defaultValue="" className="user-select">
                         <option value="" disabled>-- Select a User to Add --</option>
@@ -142,7 +157,7 @@ const CreateGroup = () => {
                             );
                         })}
                     </div>
-                </div>
+                </div> */}
 
                 <button type="submit" className="submit-btn">
                     Create Group
