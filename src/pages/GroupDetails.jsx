@@ -127,7 +127,7 @@ const GroupDetails = () => {
                         ← Back to Teams
                     </button>
 
-                    <button onClick={() => navigate(`/modify-group/${id}`)} className="settings-link">
+                    <button onClick={() => navigate(`/modify-group/${id}/${data.name}`)} className="settings-link">
                         Modify ⚙
                     </button>
                 </div>

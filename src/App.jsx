@@ -6,6 +6,7 @@ import MainLayout from './pages/MainLayout';
 import CreateGroup from './pages/CreateGroup';
 import GroupList from './pages/GroupList';
 import MyGroups from './pages/MyGroups';
+import ModifyGroup from './pages/ModifyGroup';
 import GroupDetails from './pages/GroupDetails';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -57,6 +58,11 @@ function App() {
                     <ProtectedRoute>
                         {/* <GroupList /> */}
                         <MyGroups />
+                    </ProtectedRoute>
+                } />
+                <Route path="/modify-group/:id/:group" element={
+                    <ProtectedRoute>
+                        <ModifyGroup />
                     </ProtectedRoute>
                 } />
             </Route>

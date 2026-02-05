@@ -31,7 +31,6 @@ const CreateGroup = () => {
     }, []);
 
     const addUserId = (id) => {
-        // ------- handleAddUser --------
         // const userId = e.target.value;
         // if (!userId) return;
 
@@ -52,7 +51,6 @@ const CreateGroup = () => {
     };
 
     const removeUserId = (userIdToRemove) => {
-        // handleRemoveUser
         setSelectedUserIds(selectedUserIds.filter(id => id !== userIdToRemove));
     };
 
@@ -85,8 +83,6 @@ const CreateGroup = () => {
             console.error("Error creating group:", error);
         }
     };
-
-    // const getUserObj = (id) => allUsers.find(u => u.id === id);
 
     return (
         <div className="create-group-container">
