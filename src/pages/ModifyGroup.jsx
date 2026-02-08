@@ -72,10 +72,12 @@ const ModifyGroup = () => {
         let payload = {};
 
         payload = {
-            name: groupName,
-            newMemberIds: selectedUserIds,
-            removedMemberIds: Array.from(deletedMemberIds)
+            updatedName: groupName,
+            userIdsToAdd: selectedUserIds,
+            userIdsToRemove: Array.from(deletedMemberIds)
         };
+
+        console.log("Payload to submit:", payload);
 
         try {
             const response = await fetch(`/api/groups/modify/${id}`, {
