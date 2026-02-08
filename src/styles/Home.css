@@ -218,6 +218,7 @@
     align-items: center;
     padding: 15px 20px;
     border-bottom: 1px solid #333; /* Dark separator */
+    border-radius: 3px;
 }
 
 .task-item:last-child {
@@ -279,4 +280,24 @@
     align-items: center;
     width: 100%;
     margin-bottom: 1rem; /* Space between buttons and the Title */
+}
+
+/* Blur and fade the text block */
+.task-item.staged-deleted .task-info {
+    filter: blur(1px);
+    opacity: 0.5;
+    pointer-events: none; /* Prevents clicking inside the blurred area */
+}
+
+/* Optional: change the background or add a strike-through */
+.task-item.staged-deleted {
+    background-color: #5c5050;
+}
+
+.undo-btn {
+    color: #52c41a; /* Green for undo */
+    font-weight: bold;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    padding: 2px 8px;
 }

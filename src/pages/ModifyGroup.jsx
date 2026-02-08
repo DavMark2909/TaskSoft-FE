@@ -10,7 +10,7 @@ const ModifyGroup = () => {
 
     const [groupName, setGroupName] = useState(group || '');
     const [existingUsers, setExistingUsers] = useState([]);
-    const [removedUsersIds, setRemovedUsersIds] = useState([]);
+    const [deletedMemberIds, setDeletedMemberIds] = useState(new Set());
 
     const [allUsers, setAllUsers] = useState([]);
     const [selectedUserIds, setSelectedUserIds] = useState([]);
@@ -18,27 +18,30 @@ const ModifyGroup = () => {
     const [userExpanded, setUsersExpanded] = useState(false);
     const [loading, setLoading] = useState(true);
 
-
-
     useEffect(() => {
         const fetchGroupDetails = async () => {
             try {
                 const existingUsersResponse = await fetch(`/api/groups/stats/${id}`);
                 const newUsersResponse = await fetch(`/api/users/get-all`);
 
+                // set to filter out existing users from the all users list
+                let exiUsers;
+
                 if (existingUsersResponse.ok) {
                     const result = await existingUsersResponse.json();
                     console.log(result);
+                    exiUsers = new Set(result.usersDto.groupMembers.map(m => m.userId));
                     setExistingUsers(result);
                 } else {
                     console.error("Failed to fetch group details");
                 }
                 if (newUsersResponse.ok) {
                     const usersData = await newUsersResponse.json();
-                    setAllUsers(usersData);
+                    setAllUsers(usersData.filter(user => !exiUsers.has(user.id)));
                 } else {
                     console.error("Failed to fetch all users");
                 }
+            
             } catch (error) {
                 console.error("Error:", error);
             } finally {
@@ -66,8 +69,44 @@ const ModifyGroup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        let payload = {};
 
+        payload = {
+            name: groupName,
+            newMemberIds: selectedUserIds,
+            removedMemberIds: Array.from(deletedMemberIds)
+        };
+
+        try {
+            const response = await fetch(`/api/groups/modify/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                navigate('/manage-groups');
+            } else {
+                console.error("Failed to modify group");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
     };
+
+    const toggleDelete = (userId) => {
+        setDeletedMemberIds(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(userId)) {
+                newSet.delete(userId);
+            } else {
+                newSet.add(userId);
+            }
+            return newSet;
+        });
+    }
 
     const members = existingUsers?.usersDto?.groupMembers || [];
 
@@ -77,7 +116,7 @@ const ModifyGroup = () => {
     return (
         <div className="create-group-container">
             <form onSubmit={handleSubmit} className="group-form">
-                <h1 className="page-title">Create New Team</h1>
+                <h1 className="page-title">Modify a Team</h1>
 
                 <div className="form-group">
                     <label>Team Name</label>
@@ -108,14 +147,26 @@ const ModifyGroup = () => {
 
                     {userExpanded && (
                         <div className="task-list">
-                            {members.map(member => (
-                                <div key={member.userId} className="task-item">
-                                    <div className="task-info">
-                                        <div className="task-title">{member.fullName}</div>
-                                        <div className="task-desc">@{member.username}</div>
+                            {members.map(member => {
+                                const isDeleted = deletedMemberIds.has(member.userId);
+                                return ( 
+                                    <div key={member.userId} className={`task-item ${isDeleted ? 'staged-deleted' : ''}`}>
+                                        <div className="task-info">
+                                            <div className="task-title">{member.fullName}</div>
+                                            <div className="task-desc">@{member.username}</div>
+                                        </div>
+
+                                        <button 
+                                            type="button"
+                                            className="delete-btn"
+                                            onClick={() => toggleDelete(member.userId)}
+
+                                        >
+                                            {isDeleted ? 'Undo' : '✕'}
+                                        </button>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                        })}
                         </div>
                     )}
                 </div>
@@ -131,6 +182,14 @@ const ModifyGroup = () => {
                     onRemoveUser={removeUserId}
                     loading={loading}
                 />
+
+                <div className="action-footer">
+                    <button
+                        className="submit-btn"
+                    >
+                        Modify Task
+                    </button>
+                </div>
 
             </form>
 

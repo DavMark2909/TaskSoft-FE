@@ -10,57 +10,6 @@ const GroupDetails = () => {
     const [loading, setLoading] = useState(true);
     const [userExpanded, setUsersExpanded] = useState(false);
 
-    const DUMMY_GROUP_DATA = {
-        groupName: "Backend Team",
-        stats: {
-            totalCompleted: 15,
-            totalPending: 5,
-            overdueCount: 2
-        },
-        tasks: [
-            {
-                id: 201,
-                title: "Fix JWT Token Expiry",
-                description: "Tokens are expiring too fast in production. Need to extend TTL to 24h.",
-                taskType: "IN_PROGRESS",
-                dueDate: "2025-12-01T10:00:00", // Past date (Overdue)
-                assigneeName: "Mark Spencer"
-            },
-            {
-                id: 202,
-                title: "Optimize Database Queries",
-                description: "The 'get-all-users' endpoint is taking 2s to load. Needs indexing.",
-                taskType: "IN_PROGRESS",
-                dueDate: "2025-12-08T15:00:00", // Future date
-                assigneeName: "Sarah Connor"
-            },
-            {
-                id: 203,
-                title: "Setup CI/CD Pipeline",
-                description: "Integrate GitHub Actions for auto-deployment to AWS.",
-                taskType: "IN_PROGRESS",
-                dueDate: "2025-12-10T09:00:00",
-                assigneeName: "John Doe"
-            },
-            {
-                id: 204,
-                title: "Update API Documentation",
-                description: "Swagger is missing the new Group endpoints.",
-                taskType: "IN_PROGRESS",
-                dueDate: "2025-12-05T12:00:00", // Future date
-                assigneeName: "Mark Spencer"
-            },
-            {
-                id: 205,
-                title: "Refactor Auth Middleware",
-                description: "Clean up the legacy code in the security filter chain.",
-                taskType: "IN_PROGRESS",
-                dueDate: "2025-11-20T10:00:00", // Past date (Overdue)
-                assigneeName: "Alice Wonderland"
-            }
-        ]
-    };
-
     const handleDelete = async (taskId) => {
         if (window.confirm("Are you sure you want to delete this task?")) {
             try {
@@ -118,7 +67,7 @@ const GroupDetails = () => {
     if (!data) return <div className="empty-state">Group not found.</div>;
 
     return (
-        <div className="group-details-container">
+        <div className="create-group-container">
 
 
             <header className="welcome-header">
