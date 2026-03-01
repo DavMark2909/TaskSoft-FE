@@ -1,101 +1,92 @@
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import useFetch from '../utils/useFetch';
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 import '../styles/Home.css';
 
 function Home() {
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    // const [data, setData] = useState(null);
+    // const [loading, setLoading] = useState(true);
     const [expandedGroups, setExpandedGroups] = useState({});
 
-    const DUMMY_DATA = {
-    userName: "Mark",
-    stats: {
-        totalCompleted: 42,
-        totalPending: 8,
-        overdueCount: 2
-    },
-    ongoingTasks: [
-        {
-            id: 101,
-            title: "Fix Login JWT Issue",
-            description: "Token is expiring too fast, need to check refresh token logic.",
-            group: "Backend Team",
-            dueDate: "2025-12-05T10:00:00"
-        },
-        {
-            id: 102,
-            title: "Database Migration",
-            description: "Migrate User table to new schema.",
-            group: "Backend Team",
-            dueDate: "2025-12-08T14:30:00"
-        },
-        {
-            id: 103,
-            title: "Prepare Q4 Financial Report",
-            description: "Gather data from all departments for the board meeting.",
-            group: "Finance Group",
-            dueDate: "2025-12-01T09:00:00" // Past date (Overdue)
-        },
-        {
-            id: 104,
-            title: "Review Budget Proposal",
-            description: "Check the allocation for the new marketing campaign.",
-            group: "Finance Group",
-            dueDate: "2025-12-10T11:00:00"
-        },
-        {
-            id: 105,
-            title: "Buy Groceries",
-            description: "Milk, Eggs, Bread, and Coffee.",
-            group: null, // Testing the "Personal" fallback
-            dueDate: "2025-12-04T18:00:00"
-        },
-        {
-            id: 106,
-            title: "Call Mom",
-            description: "Catch up on the weekend news.",
-            group: null,
-            dueDate: "2025-12-06T19:00:00"
-        },
-        {
-            id: 107,
-            title: "Update API Documentation",
-            description: "Swagger UI is outdated.",
-            group: "DevOps",
-            dueDate: "2025-12-15T12:00:00"
-        }
-    ]
-};
+
+
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const response = await fetch('/api/home');
+
+    //             if (response.status === 401) {
+    //                 console.log("Session expired or invalid. Redirecting to login...");
+                    
+    //                 window.location.href = "http://localhost:9000/oauth2/authorization/gateway";
+    //                 return; 
+    //             }
+
+    //             if (!response.ok) {
+    //                 throw new Error(`HTTP error! status: ${response.status}`);
+    //             }
+
+    //             const result = await response.json();
+    //             console.log(result)
+    //             setData(result);
+                
+    //         } catch (error) {
+    //             console.error("Error fetching data:", error);
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     fetchData();
+    // }, []);
+
+    const { data, loading, error } = useFetch('/api/home');
+
+    // make a call to notification service to get all notifications for the user
+
+    const { data: groupdData, loading: groupLoading, error: groupError } = useFetch('/api/user/groups');
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('/api/home');
+        if (!groupdData || !data) return;
 
-                if (response.status === 401) {
-                    console.log("Session expired or invalid. Redirecting to login...");
-                    
-                    window.location.href = "http://localhost:9000/oauth2/authorization/gateway";
-                    return; 
-                }
+        console.log("Groups data:", groupdData);
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+        const stompClient = new Client({
+            webSocketFactory: () => new SockJS('http://localhost:9000/ws-notifications', null, {
+                withCredentials: true
+            }),
+            
+            onConnect: () => {
+                console.log("Connected to STOMP!");
 
-                const result = await response.json();
-                console.log(result)
-                setData(result);
-                
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            } finally {
-                setLoading(false);
+                stompClient.subscribe('/user/queue/notifications', (message) => {
+                    const newAlert = JSON.parse(message.body);
+                    setLiveNotifications(prev => [...prev, newAlert]);
+                });
+        
+                groupdData.forEach(group => {
+                    stompClient.subscribe(`/topic/group.${group.id}`, (message) => {
+                        const newAlert = JSON.parse(message.body);
+                        setLiveNotifications(prev => [...prev, newAlert]);
+                    });
+                });
+            },
+            onStompError: (frame) => {
+                console.error('Broker reported error: ' + frame.headers['message']);
             }
+        });
+
+        stompClient.activate();
+
+        return () => {
+            stompClient.deactivate();
         };
 
-        fetchData();
-    }, []);
+
+    }, [groupdData]);
+
 
 
     const handleComplete = async (task) => {

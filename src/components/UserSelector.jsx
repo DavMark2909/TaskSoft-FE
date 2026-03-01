@@ -6,7 +6,7 @@ const UserSelector = ({ allUsers, selectedUserIds, onAddUser, onRemoveUser, load
         const userId = e.target.value;
         if (!userId) return;
 
-        const userToAdd = allUsers.find(u => String(u.id) === String(userId));
+        const userToAdd = allUsers.find(u => u.id === userId);
         
         if (userToAdd) {
             onAddUser(userToAdd.id);
