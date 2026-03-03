@@ -1,16 +1,11 @@
 import { use, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import useFetch from '../utils/useFetch';
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 import '../styles/Home.css';
 
 function Home() {
-    // const [data, setData] = useState(null);
-    // const [loading, setLoading] = useState(true);
+
     const [expandedGroups, setExpandedGroups] = useState({});
-
-
 
     // useEffect(() => {
     //     const fetchData = async () => {
@@ -44,49 +39,8 @@ function Home() {
 
     const { data, loading, error } = useFetch('/api/home');
 
-    // make a call to notification service to get all notifications for the user
 
-    const { data: groupdData, loading: groupLoading, error: groupError } = useFetch('/api/user/groups');
-
-    useEffect(() => {
-        if (!groupdData || !data) return;
-
-        console.log("Groups data:", groupdData);
-
-        const stompClient = new Client({
-            webSocketFactory: () => new SockJS('http://localhost:9000/ws-notifications', null, {
-                withCredentials: true
-            }),
-            
-            onConnect: () => {
-                console.log("Connected to STOMP!");
-
-                stompClient.subscribe('/user/queue/notifications', (message) => {
-                    const newAlert = JSON.parse(message.body);
-                    setLiveNotifications(prev => [...prev, newAlert]);
-                });
-        
-                groupdData.forEach(group => {
-                    stompClient.subscribe(`/topic/group.${group.id}`, (message) => {
-                        const newAlert = JSON.parse(message.body);
-                        setLiveNotifications(prev => [...prev, newAlert]);
-                    });
-                });
-            },
-            onStompError: (frame) => {
-                console.error('Broker reported error: ' + frame.headers['message']);
-            }
-        });
-
-        stompClient.activate();
-
-        return () => {
-            stompClient.deactivate();
-        };
-
-
-    }, [groupdData]);
-
+    // const { data: groupdData, loading: groupLoading, error: groupError } = useFetch('/api/user/groups');
 
 
     const handleComplete = async (task) => {
